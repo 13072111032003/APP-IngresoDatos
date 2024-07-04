@@ -1,5 +1,5 @@
 document.getElementById('clienteForm').addEventListener('submit', function (event) {
-    event.preventDefault(); 
+    event.preventDefault();
 
     const nombre = document.getElementById('nombre').value;
     const apellido = document.getElementById('apellido').value;
@@ -54,8 +54,19 @@ document.getElementById('clienteForm').addEventListener('submit', function (even
         telefono: telefono
     };
 
+    // Verificar si la cédula ya está registrada
+    const clientesGuardados = JSON.parse(localStorage.getItem('clientes')) || [];
+
+    const cedulaExiste = clientesGuardados.some(cliente => cliente.cedula === cedula);
+
+    if (cedulaExiste) {
+        alert('Ya existe un cliente con esta cédula.');
+        return;
+    }
+
     // Guardar datos en localStorage
-    localStorage.setItem('cliente', JSON.stringify(cliente));
+    clientesGuardados.push(cliente);
+    localStorage.setItem('clientes', JSON.stringify(clientesGuardados));
 
     console.log('Datos del cliente guardados en localStorage:');
     console.log(cliente);
@@ -64,15 +75,17 @@ document.getElementById('clienteForm').addEventListener('submit', function (even
 });
 
 window.onload = function() {
-    const clienteGuardado = JSON.parse(localStorage.getItem('cliente'));
-
-    if (clienteGuardado) {
-        document.getElementById('nombre').value = clienteGuardado.nombre;
-        document.getElementById('apellido').value = clienteGuardado.apellido;
-        document.getElementById('edad').value = clienteGuardado.edad;
-        document.getElementById('cedula').value = clienteGuardado.cedula;
-        document.getElementById('email').value = clienteGuardado.email;
-        document.getElementById('direccion').value = clienteGuardado.direccion;
-        document.getElementById('telefono').value = clienteGuardado.telefono;
+    const clientesGuardados = JSON.parse(localStorage.getItem('clientes')) || [];
+    
+    if (clientesGuardados.length > 0) {
+        const ultimoCliente = clientesGuardados[clientesGuardados.length - 1];
+        document.getElementById('nombre').value = ultimoCliente.nombre;
+        document.getElementById('apellido').value = ultimoCliente.apellido;
+        document.getElementById('edad').value = ultimoCliente.edad;
+        document.getElementById('cedula').value = ultimoCliente.cedula;
+        document.getElementById('email').value = ultimoCliente.email;
+        document.getElementById('direccion').value = ultimoCliente.direccion;
+        document.getElementById('telefono').value = ultimoCliente.telefono;
     }
 };
+
